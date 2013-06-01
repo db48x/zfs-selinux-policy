@@ -1,0 +1,75 @@
+
+## <summary>policy for zfs</summary>
+
+########################################
+## <summary>
+##	Execute TEMPLATE in the zfs domin.
+## </summary>
+## <param name="domain">
+## <summary>
+##	Domain allowed to transition.
+## </summary>
+## </param>
+#
+interface(`zfs_domtrans',`
+	gen_require(`
+		type zfs_t, zfs_exec_t;
+	')
+
+	corecmd_search_bin($1)
+	domtrans_pattern($1, zfs_exec_t, zfs_t)
+')
+
+########################################
+## <summary>
+##	Execute zfs server in the zfs domain.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`zfs_initrc_domtrans',`
+	gen_require(`
+		type zfs_initrc_exec_t;
+	')
+
+	init_labeled_script_domtrans($1, zfs_initrc_exec_t)
+')
+
+########################################
+## <summary>
+##	All of the rules required to administrate
+##	an zfs environment
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+## <param name="role">
+##	<summary>
+##	Role allowed access.
+##	</summary>
+## </param>
+## <rolecap/>
+#
+interface(`zfs_admin',`
+	gen_require(`
+		type zfs_t;
+		type zfs_initrc_exec_t;
+	')
+
+	allow $1 zfs_t:process { ptrace signal_perms };
+	ps_process_pattern($1, zfs_t)
+
+	zfs_initrc_domtrans($1)
+	domain_system_change_exemption($1)
+	role_transition $2 zfs_initrc_exec_t system_r;
+	allow $2 system_r;
+	optional_policy(`
+		systemd_passwd_agent_exec($1)
+		systemd_read_fifo_file_passwd_run($1)
+	')
+')

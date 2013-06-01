@@ -1,0 +1,4 @@
+/etc/rc\.d/init\.d/zfs	--	gen_context(system_u:object_r:zfs_initrc_exec_t,s0)
+/dev/zfs	--	gen_context(system_u:object_r:zfs_initrc_exec_t,s0)
+/dev/zpool	--	gen_context(system_u:object_r:zfs_initrc_exec_t,s0)
+/usr/sbin/zfs		--	gen_context(system_u:object_r:zfs_exec_t,s0)

@@ -1,0 +1,48 @@
+policy_module(zfs, 1.0.0)
+
+########################################
+#
+# Declarations
+#
+
+type zfs_t;
+type zfs_exec_t;
+init_daemon_domain(zfs_t, zfs_exec_t)
+
+permissive zfs_t;
+
+type zfs_initrc_exec_t;
+init_script_file(zfs_initrc_exec_t)
+
+########################################
+#
+# zfs local policy
+#
+allow zfs_t self:fifo_file rw_fifo_file_perms;
+allow zfs_t self:unix_stream_socket create_stream_socket_perms;
+
+domain_use_interactive_fds(zfs_t)
+
+files_read_etc_files(zfs_t)
+
+auth_use_nsswitch(zfs_t)
+
+miscfiles_read_localization(zfs_t)
+
+require {
+	type default_t;
+	type zfs_t;
+	class capability { setuid setgid };
+	class dir { read mounton };
+}
+
+#============= zfs_t ==============
+allow zfs_t default_t:dir { read mounton };
+allow zfs_t self:capability { setuid setgid };
+dev_rw_generic_chr_files(zfs_t)
+files_delete_boot_flag(zfs_t)
+files_manage_etc_files(zfs_t)
+files_rw_etc_dirs(zfs_t)
+fs_mount_xattr_fs(zfs_t)
+mount_exec(zfs_t)
+mount_manage_pid_files(zfs_t)
