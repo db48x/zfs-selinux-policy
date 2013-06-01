@@ -1,0 +1,13 @@
+I needed ZFS to work on a system with SELinux, and after much
+searching I stumbled upon sepolgen. sepolgen accepts as input the name
+of an installed program and attemps to create a policy that will allow
+it to run correctly under selinux, without stepping on anything
+else. It also searches your audit log for denials and creates the
+rules needed in order to allow those operations to succeed. Because
+the result isn't perfect (for instance, it didn't set a context on the
+'zpool' binary), I've gathered it here in case anyone else needs it.
+
+Please help out by letting me know of any refinements or improvements
+you may devise. Once I'm sure that there are no major mistakes or
+ommissions, I'll get this information checked in to the actual ZFS
+repository.
